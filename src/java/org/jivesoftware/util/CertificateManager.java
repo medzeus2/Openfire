@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2005-2008 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,7 +184,7 @@ public class CertificateManager {
      */
     public static X509Certificate getEndEntityCertificate(Certificate chain[],
             KeyStore certStore, KeyStore trustStore) {
-        if (chain.length == 0) {
+        if (chain == null || chain.length == 0) {
             return null;
         }
         X509Certificate first = (X509Certificate) chain[0];
@@ -248,7 +248,7 @@ public class CertificateManager {
             CertPathBuilder pathBuilder = CertPathBuilder
                     .getInstance(CertPathBuilder.getDefaultType());
             CertPath cp = pathBuilder.build(params).getCertPath();
-            /**
+            /*
              * This section is an alternative to using CertPathBuilder which is
              * not as complete (or safe), but will emit much better errors. If
              * things break, swap around the code.
@@ -800,7 +800,7 @@ public class CertificateManager {
      */
     private static Map<String, List<X509Certificate>> getCertsByIssuer(KeyStore ks)
             throws Exception {
-        Map<String, List<X509Certificate>> answer = new HashMap<>();
+        Map<Principal, List<X509Certificate>> answer = new HashMap<>();
         Enumeration<String> aliases = ks.aliases();
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
@@ -817,10 +817,17 @@ public class CertificateManager {
                         vec.add(cert);
                     }
                 }
-                answer.put(subjectDN.getName(), vec);
+                answer.put(subjectDN, vec);
             }
         }
-        return answer;
+
+        // Compare by principal, but return by principal name.
+        final Map<String, List<X509Certificate>> result = new HashMap<>();
+        for ( Map.Entry<Principal, List<X509Certificate>> entry : answer.entrySet() )
+        {
+            result.put( entry.getKey().getName(), entry.getValue() );
+        }
+        return result;
     }
 
     /**

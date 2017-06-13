@@ -1,8 +1,4 @@
-/**
- * $RCSfile: RoutingTableImpl.java,v $
- * $Revision: 3138 $
- * $Date: 2005-12-01 02:13:26 -0300 (Thu, 01 Dec 2005) $
- *
+/*
  * Copyright (C) 2005-2008 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1092,8 +1088,9 @@ public class RoutingTableImpl extends BasicModule implements RoutingTable, Clust
         try {
         	componentLock.lock();
 	    	List<String> remoteComponents = new ArrayList<>();
+	    	NodeID nodeIDInstance = NodeID.getInstance( nodeID );
 	    	for (Map.Entry<String, Set<NodeID>> entry : componentsCache.entrySet()) {
-	    		if (entry.getValue().remove(nodeID) && entry.getValue().size() == 0) {
+	    		if (entry.getValue().remove(nodeIDInstance) && entry.getValue().size() == 0) {
 	    			remoteComponents.add(entry.getKey());
 	    		}
 	    	}

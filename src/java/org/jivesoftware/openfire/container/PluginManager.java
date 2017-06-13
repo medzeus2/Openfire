@@ -1,8 +1,4 @@
-/**
- * $RCSfile$
- * $Revision: 3001 $
- * $Date: 2005-10-31 05:39:25 -0300 (Mon, 31 Oct 2005) $
- *
+/*
  * Copyright (C) 2004-2008 Jive Software. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -286,7 +282,10 @@ public class PluginManager
             {
                 final Version requiredVersion = new Version( minServerVersion.getTextTrim() );
                 final Version currentVersion = XMPPServer.getInstance().getServerInfo().getVersion();
-                if ( requiredVersion.isNewerThan( currentVersion ) )
+
+                // OF-1338: Ignore release status when comparing minimum server version requirement.
+                final Version compareVersion = new Version( currentVersion.getMajor(), currentVersion.getMinor(), currentVersion.getMicro(), null, -1 );
+                if ( requiredVersion.isNewerThan( compareVersion ) )
                 {
                     Log.warn( "Ignoring plugin '{}': requires server version {}. Current server version is {}.", pluginName, requiredVersion, currentVersion );
                     failureToLoadCount.put( pluginName, Integer.MAX_VALUE ); // Don't retry - this cannot be recovered from.
